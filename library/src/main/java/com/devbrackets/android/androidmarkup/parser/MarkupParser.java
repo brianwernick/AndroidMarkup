@@ -13,6 +13,10 @@ import java.util.List;
 /**
  * An abstract base class that supports the Markup editing in the
  * {@link com.devbrackets.android.androidmarkup.widget.MarkupEditText}
+ *
+ * For the simplification of examples the pipe character "|" will represent selection points,
+ * the underscore character "_" will represent the current span, and a the asterisk character "*"
+ * will represent any characters between the span endpoints and the selection points.
  */
 public abstract class MarkupParser {
     public enum SpanType {
@@ -67,17 +71,109 @@ public abstract class MarkupParser {
 
         boolean modifiedSpan = false;
         for (StyleSpan span : overlappingSpans) {
-            if (spannable.getSpanStart(span) == start && spannable.getSpanEnd(span) == end) {
+            int spanStart = spannable.getSpanStart(span);
+            int spanEnd = spannable.getSpanEnd(span);
+
+            if (spanStart == start && spanEnd == end) {
                 modifiedSpan = true;
                 spannable.removeSpan(span);
+                continue;
             }
 
             //TODO: other cases (partial matches, etc.)
+            modifiedSpan |= handleSpanStartBeforeSelection(spannable, span, start, end);
+//            modifiedSpan |= updateSpanStart(spannable, span, start, end);
         }
 
         if (!modifiedSpan) {
             spannable.setSpan(new StyleSpan(style), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+    }
+
+    /**
+     * If the specified Span starts before or equal to the selection, then we need to update the span end
+     * only if the span ending is less than the <code>selectionEnd</code>.  If the span ending is
+     * greater than or equal to the <code>selectionEnd</code> then the selected area will have the style
+     * removed.
+     * <p>
+     * The cases that need to be handled below are:
+     * <ol>
+     *     <li>
+     *          The selection start is contained within or equal to the span start and the selection end goes beyond the
+     *          span end.  (e.g. __|___***| will result in __|______| or |___***| will result in |______|)
+     *     </li>
+     *     <li>
+     *          The selection start is equal to the span start and the span end is contained within the
+     *          span.  (e.g. |______|__ will result in |******|__)
+     *     </li>
+     *     <li>
+     *          Both the selection start and end are contained within the span.
+     *          (e.g. __|______|__ will result in __|******|__)
+     *     </li>
+     *     <li>
+     *          The selection start is contained within the span and the selection end is equal to the
+     *          span end.  (e.g. __|______| will result in __|******|)
+     *     </li>
+     * </ol>
+     */
+    protected boolean handleSpanStartBeforeSelection(Spannable spannable, Object span, int selectionStart, int selectionEnd) {
+        int spanStart = spannable.getSpanStart(span);
+        int spanEnd = spannable.getSpanEnd(span);
+        if (spanStart > selectionStart) {
+            return false;
+        }
+
+        //Handles the first case listed above
+        if (spanEnd < selectionEnd) {
+            spannable.removeSpan(span);
+            spannable.setSpan(span, spanStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return true;
+        }
+
+        //Handles the second case listed above
+        if (selectionStart == spanStart && spanEnd > selectionEnd) {
+            spannable.removeSpan(span);
+            spannable.setSpan(span, selectionEnd, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return true;
+        }
+
+        //Handles the third case listed above
+        if (spanEnd > selectionEnd) {
+            //TODO: we need to split the span
+            return true;
+        }
+
+        //Handles the final case listed above
+        spannable.removeSpan(span);
+        spannable.setSpan(span, spanStart, selectionStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return true;
+    }
+
+    /**
+     * If the specified Span ends after the <code>end</code>, then we need to update the start
+     * only if the span start is greater than <code>start</code>.  If the span start is
+     * less than or equal to the <code>start</code> then the selected area will have the style
+     * removed.
+     */
+    protected boolean updateSpanStart(Spannable spannable, Object span, int start, int end) {
+        int spanStart = spannable.getSpanStart(span);
+        int spanEnd = spannable.getSpanEnd(span);
+
+        if (spanEnd >= end) {
+            if (spanEnd > end) {
+                //Update the end of the span (keeping the styling)
+                spannable.removeSpan(span);
+                spannable.setSpan(span, start, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else {
+                //Remove the styling
+                spannable.removeSpan(span);
+                spannable.setSpan(span, end, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     protected void orderedList(Spannable spannable, int start, int end) {
