@@ -66,27 +66,29 @@ public abstract class MarkupParser {
         return false;
     }
 
-    protected void style(Spannable spannable, int start, int end, int style) {
-        List<StyleSpan> overlappingSpans = getOverlappingStyleSpans(spannable, start, end, style);
+    protected void style(Spannable spannable, int selectionStart, int selectionEnd, int style) {
+        List<StyleSpan> overlappingSpans = getOverlappingStyleSpans(spannable, selectionStart, selectionEnd, style);
 
         boolean modifiedSpan = false;
         for (StyleSpan span : overlappingSpans) {
             int spanStart = spannable.getSpanStart(span);
             int spanEnd = spannable.getSpanEnd(span);
 
-            if (spanStart == start && spanEnd == end) {
+            if (spanStart == selectionStart && spanEnd == selectionEnd) {
                 modifiedSpan = true;
                 spannable.removeSpan(span);
                 continue;
             }
 
-            //TODO: other cases (partial matches, etc.)
-            modifiedSpan |= handleSpanStartBeforeSelection(spannable, span, start, end);
-//            modifiedSpan |= updateSpanStart(spannable, span, start, end);
+            modifiedSpan |= handleSpanStartBeforeSelection(spannable, span,spanStart, spanEnd, selectionStart, selectionEnd);
+            modifiedSpan |= handleSpanStartAfterSelection(spannable, span, spanStart, spanEnd, selectionStart, selectionEnd);
+
+            //TODO: other cases (multiple spans?, etc.)
+            //multi span e.g. __|__****__|__
         }
 
         if (!modifiedSpan) {
-            spannable.setSpan(new StyleSpan(style), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new StyleSpan(style), selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -116,10 +118,9 @@ public abstract class MarkupParser {
      *     </li>
      * </ol>
      */
-    protected boolean handleSpanStartBeforeSelection(Spannable spannable, Object span, int selectionStart, int selectionEnd) {
-        int spanStart = spannable.getSpanStart(span);
-        int spanEnd = spannable.getSpanEnd(span);
+    protected boolean handleSpanStartBeforeSelection(Spannable spannable, Object span, int spanStart, int spanEnd, int selectionStart, int selectionEnd) {
         if (spanStart > selectionStart) {
+            //handled by handleSpanStartAfterSelection
             return false;
         }
 
@@ -139,7 +140,10 @@ public abstract class MarkupParser {
 
         //Handles the third case listed above
         if (spanEnd > selectionEnd) {
-            //TODO: we need to split the span
+            //TODO: we need to split the span (i.e. duplicate the span)
+            spannable.removeSpan(span);
+            spannable.setSpan(span, spanStart, selectionStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(span, selectionEnd, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
@@ -150,30 +154,40 @@ public abstract class MarkupParser {
     }
 
     /**
-     * If the specified Span ends after the <code>end</code>, then we need to update the start
-     * only if the span start is greater than <code>start</code>.  If the span start is
-     * less than or equal to the <code>start</code> then the selected area will have the style
-     * removed.
+     * If the specified Span starts after the <code>selectionStart</code>, then we need to update the span start
+     * to the selection.  Additionally, if the Span ends before the <code>selectionEnd</code>, we need to
+     * update the span end as well.
+     * <p>
+     * The cases that need to be handled below are:
+     * <ol>
+     *      <li>
+     *          The selection start is before the <code>spanStart</code> and the <code>selectionEnd</code>
+     *          is after the span end. (e.g. |***___***| will result in |_________|)
+     *      </li>
+     *      <li>
+     *          The selection start is before the <code>spanStart</code> and the <code>selectionEnd</code>
+     *          is before or equal to the span end. (e.g. (|***___| will result in |______| or |***___|___
+     *          will result in |______|___)
+     *      </li>
+     * </ol>
      */
-    protected boolean updateSpanStart(Spannable spannable, Object span, int start, int end) {
-        int spanStart = spannable.getSpanStart(span);
-        int spanEnd = spannable.getSpanEnd(span);
+    protected boolean handleSpanStartAfterSelection(Spannable spannable, Object span, int spanStart, int spanEnd, int selectionStart, int selectionEnd) {
+        if (spanStart <= selectionStart) {
+            //handled by handleSpanStartBeforeSelection
+            return false;
+        }
 
-        if (spanEnd >= end) {
-            if (spanEnd > end) {
-                //Update the end of the span (keeping the styling)
-                spannable.removeSpan(span);
-                spannable.setSpan(span, start, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            } else {
-                //Remove the styling
-                spannable.removeSpan(span);
-                spannable.setSpan(span, end, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
+        //Handles the first case listed above˚
+        if (spanEnd < selectionEnd) {
+            spannable.removeSpan(span);
+            spannable.setSpan(span, selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
-        return false;
+        //Handles the final case listed above
+        spannable.removeSpan(span);
+        spannable.setSpan(span, selectionStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return true;
     }
 
     protected void orderedList(Spannable spannable, int start, int end) {
