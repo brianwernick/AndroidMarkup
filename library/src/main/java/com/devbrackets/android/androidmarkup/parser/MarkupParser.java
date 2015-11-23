@@ -1,6 +1,7 @@
 package com.devbrackets.android.androidmarkup.parser;
 
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -83,13 +84,20 @@ public abstract class MarkupParser {
             modifiedSpan |= handleSpanStartBeforeSelection(spannable, span,spanStart, spanEnd, selectionStart, selectionEnd);
             modifiedSpan |= handleSpanStartAfterSelection(spannable, span, spanStart, spanEnd, selectionStart, selectionEnd);
 
-            //TODO: other cases (multiple spans?, etc.)
-            //multi span e.g. __|__****__|__
+            //TODO: optimize spans
         }
 
         if (!modifiedSpan) {
             spannable.setSpan(new StyleSpan(style), selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+    }
+
+    protected void orderedList(Spannable spannable, int selectionStart, int selectionEnd) {
+        //todo
+    }
+
+    protected void unOrderedList(Spannable spannable, int selectionStart, int selectionEnd) {
+        //todo
     }
 
     /**
@@ -126,28 +134,29 @@ public abstract class MarkupParser {
 
         //Handles the first case listed above
         if (spanEnd < selectionEnd) {
-            spannable.removeSpan(span);
             spannable.setSpan(span, spanStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
         //Handles the second case listed above
         if (selectionStart == spanStart && spanEnd > selectionEnd) {
-            spannable.removeSpan(span);
             spannable.setSpan(span, selectionEnd, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
         //Handles the third case listed above
         if (spanEnd > selectionEnd) {
-            //TODO: we need to split the span (i.e. duplicate the span)
-            spannable.removeSpan(span);
             spannable.setSpan(span, spanStart, selectionStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            Object duplicate = duplicateSpan(span);
+            if (duplicate != null) {
+                spannable.setSpan(duplicate, selectionEnd, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
             return true;
         }
 
         //Handles the final case listed above
-        spannable.removeSpan(span);
         spannable.setSpan(span, spanStart, selectionStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return true;
     }
@@ -176,29 +185,19 @@ public abstract class MarkupParser {
             return false;
         }
 
-        //Handles the first case listed above˚
+        //Handles the first case listed above
         if (spanEnd < selectionEnd) {
-            spannable.removeSpan(span);
             spannable.setSpan(span, selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
         //Handles the final case listed above
-        spannable.removeSpan(span);
         spannable.setSpan(span, selectionStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return true;
     }
 
-    protected void orderedList(Spannable spannable, int start, int end) {
-        //todo
-    }
-
-    protected void unOrderedList(Spannable spannable, int start, int end) {
-        //todo
-    }
-
-    protected List<StyleSpan> getOverlappingStyleSpans(Spannable spannable, int start, int end, int style) {
-        List<StyleSpan> spans = new LinkedList<>(Arrays.asList(spannable.getSpans(start, end, StyleSpan.class)));
+    protected List<StyleSpan> getOverlappingStyleSpans(Spannable spannable, int selectionStart, int selectionEnd, int style) {
+        List<StyleSpan> spans = new LinkedList<>(Arrays.asList(spannable.getSpans(selectionStart, selectionEnd, StyleSpan.class)));
 
         //Filters out the non-matching types
         Iterator<StyleSpan> iterator = spans.iterator();
@@ -210,5 +209,24 @@ public abstract class MarkupParser {
         }
 
         return spans;
+    }
+
+    /**
+     * Used to duplicate spans when splitting an existing span in to two.
+     * This would occur when the selection is only a partial of the styled
+     * text and the styling is removed.
+     *
+     * @param span The span to duplicate
+     * @return The duplicate span or null
+     */
+    @Nullable
+    protected Object duplicateSpan(Object span) {
+
+        if (span instanceof StyleSpan) {
+            StyleSpan styleSpan = (StyleSpan)span;
+            return new StyleSpan(styleSpan.getStyle());
+        }
+
+        return null;
     }
 }
