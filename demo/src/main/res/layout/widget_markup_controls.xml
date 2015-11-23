@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="16dp"
+              android:paddingBottom="16dp">
+
+    <ImageView
+        android:id="@+id/markup_controls_bold"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_format_bold_24dp"
+        tools:ignore="ContentDescription"/>
+
+    <ImageView
+        android:id="@+id/markup_controls_italic"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_format_italic_24dp"
+        tools:ignore="ContentDescription"/>
+
+    <ImageView
+        android:id="@+id/markup_controls_unordered_list"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_format_list_bulleted_24dp"
+        tools:ignore="ContentDescription"/>
+
+    <ImageView
+        android:id="@+id/markup_controls_ordered_list"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_format_list_numbered_24dp"
+        tools:ignore="ContentDescription"/>
+</LinearLayout>

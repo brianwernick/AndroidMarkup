@@ -143,7 +143,6 @@ public abstract class MarkupParser {
             //TODO: we need to split the span (i.e. duplicate the span)
             spannable.removeSpan(span);
             spannable.setSpan(span, spanStart, selectionStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannable.setSpan(span, selectionEnd, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return true;
         }
 
