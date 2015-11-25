@@ -3,35 +3,36 @@ package com.devbrackets.android.androidmarkup.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.devbrackets.android.androidmarkup.R;
 import com.devbrackets.android.androidmarkup.parser.HtmlParser;
 import com.devbrackets.android.androidmarkup.parser.MarkdownParser;
 import com.devbrackets.android.androidmarkup.parser.MarkupParser;
-import com.devbrackets.android.androidmarkup.parser.SpanType;
 
-/**
- * A WYSIWYG EditText for Markup languages such as HTML or
- * Markdown.  This leaves the UI up to the implementing application.
- */
-public class MarkupEditText extends AppCompatEditText {
+public class MarkupTextView extends AppCompatTextView {
     protected MarkupParser markupParser;
 
-    public MarkupEditText(Context context) {
+    public MarkupTextView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public MarkupEditText(Context context, AttributeSet attrs) {
+    public MarkupTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public MarkupEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MarkupTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
+    }
+
+    protected void init(Context context, @Nullable AttributeSet attrs) {
+        if (!readAttributes(context, attrs)) {
+            markupParser = new HtmlParser();
+        }
     }
 
     public void setMarkupParser(MarkupParser markupParser) {
@@ -40,32 +41,6 @@ public class MarkupEditText extends AppCompatEditText {
 
     public void setMarkup(String markup) {
         setText(markupParser.toSpanned(markup));
-    }
-
-    public String getMarkup() {
-        return markupParser.fromSpanned(getText());
-    }
-
-    public void toggleBold() {
-        markupParser.updateSpan(getText(), SpanType.BOLD, getSelectionStart(), getSelectionEnd());
-    }
-
-    public void toggleItalics() {
-        markupParser.updateSpan(getText(), SpanType.ITALIC, getSelectionStart(), getSelectionEnd());
-    }
-
-    public void toggleOrderedList() {
-        markupParser.updateSpan(getText(), SpanType.ORDERED_LIST, getSelectionStart(), getSelectionEnd());
-    }
-
-    public void toggleUnOrderedList() {
-        markupParser.updateSpan(getText(), SpanType.UNORDERED_LIST, getSelectionStart(), getSelectionEnd());
-    }
-
-    protected void init(Context context, @Nullable AttributeSet attrs) {
-        if (!readAttributes(context, attrs)) {
-            markupParser = new HtmlParser();
-        }
     }
 
     /**

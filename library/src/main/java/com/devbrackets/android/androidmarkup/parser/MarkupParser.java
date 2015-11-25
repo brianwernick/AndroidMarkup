@@ -6,6 +6,8 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 
+import com.devbrackets.android.androidmarkup.text.style.ListSpan;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,13 +22,6 @@ import java.util.List;
  * will represent any characters between the span endpoints and the selection points.
  */
 public abstract class MarkupParser {
-    public enum SpanType {
-        BOLD,
-        ITALIC,
-        ORDERED_LIST,
-        UNORDERED_LIST
-    }
-
     /**
      * Converts the specified markup text in to a Spanned
      * for use in the {@link com.devbrackets.android.androidmarkup.widget.MarkupEditText}
@@ -45,22 +40,22 @@ public abstract class MarkupParser {
      */
     public abstract String fromSpanned(Spanned spanned);
 
-    public boolean updateSpan(Spannable spannable, SpanType spanType, int startIndex, int endIndex) {
+    public boolean updateSpan(Spannable spannable, int spanType, int startIndex, int endIndex) {
         switch (spanType) {
-            case BOLD:
+            case SpanType.BOLD:
                 style(spannable, startIndex, endIndex, Typeface.BOLD);
                 return true;
 
-            case ITALIC:
+            case SpanType.ITALIC:
                 style(spannable, startIndex, endIndex, Typeface.ITALIC);
                 return true;
 
-            case ORDERED_LIST:
-                orderedList(spannable, startIndex, endIndex);
+            case SpanType.ORDERED_LIST:
+                list(spannable, startIndex, endIndex, true);
                 return true;
 
-            case UNORDERED_LIST:
-                unOrderedList(spannable, startIndex, endIndex);
+            case SpanType.UNORDERED_LIST:
+                list(spannable, startIndex, endIndex, false);
                 return true;
         }
 
@@ -83,21 +78,51 @@ public abstract class MarkupParser {
 
             modifiedSpan |= handleSpanStartBeforeSelection(spannable, span,spanStart, spanEnd, selectionStart, selectionEnd);
             modifiedSpan |= handleSpanStartAfterSelection(spannable, span, spanStart, spanEnd, selectionStart, selectionEnd);
-
-            //TODO: optimize spans
         }
 
-        if (!modifiedSpan) {
+        if (modifiedSpan) {
+            optimizeSpans(spannable, getOverlappingStyleSpans(spannable, selectionStart, selectionEnd, style));
+        } else {
             spannable.setSpan(new StyleSpan(style), selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
-    protected void orderedList(Spannable spannable, int selectionStart, int selectionEnd) {
-        //todo
-    }
+    protected void list(Spannable spannable, int selectionStart, int selectionEnd, boolean ordered) {
+        List<ListSpan> overlappingSpans = new LinkedList<>(Arrays.asList(spannable.getSpans(selectionStart, selectionEnd, ListSpan.class)));
 
-    protected void unOrderedList(Spannable spannable, int selectionStart, int selectionEnd) {
-        //todo
+        //Updates the selectionStart to the new line
+        if (selectionStart != 0) {
+            int previousNewline = findPreviousChar(spannable, selectionStart, '\n');
+            selectionStart = previousNewline == -1 ? 0 : previousNewline;
+        }
+
+        //Updates the selectionEnd to the new line
+        if (selectionEnd != spannable.length() -1) {
+            int nextNewline = findNextChar(spannable, selectionEnd, '\n');
+            selectionEnd = nextNewline == -1 ? spannable.length() -1 : nextNewline;
+        }
+
+        boolean modifiedSpan = false;
+        for (ListSpan span : overlappingSpans) {
+            int spanStart = spannable.getSpanStart(span);
+            int spanEnd = spannable.getSpanEnd(span);
+
+            if (spanStart == selectionStart && spanEnd == selectionEnd) {
+                modifiedSpan = true;
+                spannable.removeSpan(span);
+                continue;
+            }
+
+            modifiedSpan |= handleSpanStartBeforeSelection(spannable, span,spanStart, spanEnd, selectionStart, selectionEnd);
+            modifiedSpan |= handleSpanStartAfterSelection(spannable, span, spanStart, spanEnd, selectionStart, selectionEnd);
+        }
+
+        if (modifiedSpan) {
+            optimizeSpans(spannable, new LinkedList<>(Arrays.asList(spannable.getSpans(selectionStart, selectionEnd, ListSpan.class))));
+            return;
+        }
+
+        spannable.setSpan(new ListSpan(ordered ? ListSpan.Type.NUMERICAL : ListSpan.Type.BULLET), selectionStart, selectionEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     /**
@@ -211,6 +236,11 @@ public abstract class MarkupParser {
         return spans;
     }
 
+    protected void optimizeSpans(Spannable spannable, List<?> overlappingSpans) {
+
+        //TODO: optimize spans (merge overlapping or abutting spans)
+    }
+
     /**
      * Used to duplicate spans when splitting an existing span in to two.
      * This would occur when the selection is only a partial of the styled
@@ -221,12 +251,47 @@ public abstract class MarkupParser {
      */
     @Nullable
     protected Object duplicateSpan(Object span) {
-
         if (span instanceof StyleSpan) {
             StyleSpan styleSpan = (StyleSpan)span;
             return new StyleSpan(styleSpan.getStyle());
         }
 
         return null;
+    }
+
+    protected int findPreviousChar(Spannable spannable, int start, char character) {
+        if (start < 0) {
+            return -1;
+        }
+
+        if (start >= spannable.length()) {
+            start = spannable.length() -1;
+        }
+
+        for (int i = start; i >= 0; i--) {
+            if (spannable.charAt(i) == character) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    protected int findNextChar(Spannable spannable, int start, char character) {
+        if (start < 0) {
+            start = 0;
+        }
+
+        if (start >= spannable.length()) {
+            return -1;
+        }
+
+        for (int i = start; i < spannable.length(); i++) {
+            if (spannable.charAt(i) == character) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

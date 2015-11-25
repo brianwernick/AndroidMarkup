@@ -4,23 +4,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <com.devbrackets.android.androidmarkupdemo.ui.widget.MarkupControls
-        android:id="@+id/markup_controls"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
     <com.devbrackets.android.androidmarkup.widget.MarkupEditText
         android:id="@+id/markup_edit_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/markup_controls"
-        android:layout_toEndOf="@id/markup_controls"
+        android:layout_toLeftOf="@+id/markup_controls"
+        android:layout_toStartOf="@+id/markup_controls"
         android:background="@android:color/transparent"
         android:inputType="textMultiLine"
         android:gravity="top"
         android:padding="8dp"
         android:hint="Please enter your text to markup"
         tools:ignore="HardcodedText"/>
+
+    <com.devbrackets.android.androidmarkupdemo.ui.widget.MarkupControls
+        android:id="@+id/markup_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 </RelativeLayout>
