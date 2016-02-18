@@ -9,6 +9,8 @@ import android.text.style.StyleSpan;
 import com.devbrackets.android.androidmarkup.text.style.ListSpan;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -220,6 +222,20 @@ public abstract class MarkupParser {
         //Handles the final case listed above
         spannable.setSpan(span, selectionStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return true;
+    }
+
+    protected List<Object> getAllSpans(Spanned spanned) {
+        return new LinkedList<>(Arrays.asList(spanned.getSpans(0, spanned.length(), Object.class)));
+    }
+
+    protected List<Object> getAllSpans(Spanned spanned, Comparator<Object> comparator) {
+        List<Object> spans = getAllSpans(spanned);
+        if (spans.isEmpty()) {
+            return spans;
+        }
+
+        Collections.sort(spans, comparator);
+        return spans;
     }
 
     protected List<StyleSpan> getOverlappingStyleSpans(Spannable spannable, int selectionStart, int selectionEnd, int style) {

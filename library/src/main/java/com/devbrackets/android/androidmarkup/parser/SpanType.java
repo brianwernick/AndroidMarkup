@@ -6,6 +6,7 @@ package com.devbrackets.android.androidmarkup.parser;
  * spans, use values after {@link #MAX_SPAN_TYPE}
  */
 public interface SpanType {
+    int UNKNOWN = 0;
     int BOLD = 1;
     int ITALIC = 2;
     int ORDERED_LIST = 3;
