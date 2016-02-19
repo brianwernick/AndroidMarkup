@@ -8,7 +8,7 @@ import com.devbrackets.android.androidmarkup.text.style.ListSpan
 import java.util.*
 
 class MarkdownDocument {
-    lateinit var elements: MutableList<MarkdownElement>
+    val rootElement: MarkdownElement = MarkdownElement(null)
 
     constructor(markdown: String) {
         //TODO
@@ -17,24 +17,20 @@ class MarkdownDocument {
     constructor(spanned: Spanned) {
         var spans: List<Any> = findAllSpans(spanned, ReverseIndexSpanComparator(spanned))
         if (spans.isEmpty()) {
-            elements = mutableListOf(MarkdownElement(null, MarkdownSpanType.TEXT, spanned.toString()))
+            rootElement.addChild(MarkdownElement(rootElement, MarkdownSpanType.TEXT, spanned.toString()))
             return
         }
 
-        elements = mutableListOf()
         var position = 0
         while (position < spans.size) {
-            position = populateElements(spanned, spans, position, null) +1
+            position = populateElements(spanned, spans, position, rootElement) +1
         }
     }
 
     fun toMarkdown() : String {
         //TODO: don't forget to escape non-MD characters (e.g. * in text should be \*)
-
         val builder: StringBuilder = StringBuilder()
-        for (element in elements) {
-            toMarkdown(element, builder)
-        }
+        toMarkdown(rootElement, builder)
 
         //see https://github.com/Uncodin/bypass/blob/master/platform/android/library/src/in/uncod/android/bypass/ReverseSpannableStringBuilder.java
         return builder.reverse().toString() //TODO: this isn't right, we need a custom reverse builder (this will result in **tset** instead of **test**)
@@ -47,21 +43,21 @@ class MarkdownDocument {
     /**
      * @return The last index in `spans` used.  If this is a leaf node, the retun value will be the same as `position`
      */
-    protected fun populateElements(spanned: Spanned, spans: List<Any>, position: Int, parent: MarkdownElement?) : Int {
+    protected fun populateElements(spanned: Spanned, spans: List<Any>, position: Int, parent: MarkdownElement) : Int {
         var span: Any = spans[position]
         var spanStart = spanned.getSpanStart(span)
 
         //If this span is a leaf, then add the element and return
-        var hasChildren = position < spans.size -1 && spanned.getSpanEnd(spans.get(position +1)) > spanStart
+        var hasChildren = position < spans.size -1 && spanned.getSpanEnd(spans[position +1]) > spanStart
         if (!hasChildren) {
             var element = MarkdownElement(parent, getSpanType(span), getSpanText(spanned, span))
-            parent?.addChild(element) ?: elements.add(element)
+            parent.addChild(element)
             return position
         }
 
         //If the span has children then we need to split it in to corresponding elements
         var element = MarkdownElement(parent, getSpanType(span), null)
-        parent?.addChild(element) ?: elements.add(element)
+        parent.addChild(element)
         var workingPosition = position +1
 
         while (workingPosition < spans.size) {
@@ -73,7 +69,7 @@ class MarkdownDocument {
                 break;
             }
 
-            //TODO: add a child element... does this work. (we are missing the text that isn't in the child spans)
+            //TODO: characters not contained in a child span are removed (this is also a problem at the top level)
             workingPosition = populateElements(spanned, spans, workingPosition, element) +1
         }
 

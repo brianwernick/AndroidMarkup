@@ -4,6 +4,7 @@ import com.devbrackets.android.androidmarkup.parser.core.SpanType
 
 object MarkdownSpanType {
     const val TEXT = SpanType.MAX_SPAN_TYPE +1
+    const val UNKNOWN = SpanType.UNKNOWN
     const val BOLD = SpanType.BOLD
     const val ITALIC = SpanType.ITALIC
     const val ORDERED_LIST = SpanType.ORDERED_LIST
