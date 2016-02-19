@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.devbrackets.android.androidmarkup.parser.MarkdownParser;
+import com.devbrackets.android.androidmarkup.parser.markdown.MarkdownParser;
 import com.devbrackets.android.androidmarkup.widget.MarkupEditText;
 import com.devbrackets.android.androidmarkupdemo.R;
 import com.devbrackets.android.androidmarkupdemo.ui.widget.MarkupControls;

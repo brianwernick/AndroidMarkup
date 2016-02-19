@@ -4,10 +4,10 @@ import android.content.Context
 import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
 import com.devbrackets.android.androidmarkup.R
-import com.devbrackets.android.androidmarkup.parser.HtmlParser
-import com.devbrackets.android.androidmarkup.parser.MarkdownParser
-import com.devbrackets.android.androidmarkup.parser.MarkupParser
-import com.devbrackets.android.androidmarkup.parser.SpanType
+import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
+import com.devbrackets.android.androidmarkup.parser.markdown.MarkdownParser
+import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
+import com.devbrackets.android.androidmarkup.parser.core.SpanType
 
 /**
  * A WYSIWYG EditText for Markup languages such as HTML or

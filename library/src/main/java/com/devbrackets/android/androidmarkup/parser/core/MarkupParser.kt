@@ -1,4 +1,4 @@
-package com.devbrackets.android.androidmarkup.parser
+package com.devbrackets.android.androidmarkup.parser.core
 
 import android.graphics.Typeface
 import android.text.Spannable
@@ -225,20 +225,6 @@ abstract class MarkupParser {
         return true
     }
 
-    protected fun getAllSpans(spanned: Spanned): List<Any> {
-        return LinkedList(Arrays.asList(*spanned.getSpans(0, spanned.length, Any::class.java)))
-    }
-
-    protected fun getAllSpans(spanned: Spanned, comparator: Comparator<Any>): List<Any> {
-        val spans = getAllSpans(spanned)
-        if (spans.isEmpty()) {
-            return spans
-        }
-
-        Collections.sort(spans, comparator)
-        return spans
-    }
-
     protected fun getOverlappingStyleSpans(spannable: Spannable, selectionStart: Int, selectionEnd: Int, style: Int): List<StyleSpan> {
         var selectionStart = selectionStart
         var selectionEnd = selectionEnd
@@ -275,11 +261,10 @@ abstract class MarkupParser {
      * the same type.  This assumes that the specified `spans`
      * are of the same type.
      *
-     *
      * NOTE: this method is O(n^2) for `spans`
      *
      * @param spannable The spannable that the `spans` are associated with
-     * *
+     *
      * @param spans     The spans to optimize
      */
     protected fun optimizeSpans(spannable: Spannable, spans: List<*>) {

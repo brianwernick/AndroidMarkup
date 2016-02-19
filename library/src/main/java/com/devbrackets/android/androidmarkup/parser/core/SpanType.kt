@@ -1,4 +1,4 @@
-package com.devbrackets.android.androidmarkup.parser
+package com.devbrackets.android.androidmarkup.parser.core
 
 /**
  * Holds the values associated with specific types of spans
