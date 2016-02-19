@@ -28,12 +28,10 @@ class MarkdownDocument {
     }
 
     fun toMarkdown() : String {
-        //TODO: don't forget to escape non-MD characters (e.g. * in text should be \*)
         val builder: StringBuilder = StringBuilder()
         toMarkdown(rootElement, builder)
 
-        //see https://github.com/Uncodin/bypass/blob/master/platform/android/library/src/in/uncod/android/bypass/ReverseSpannableStringBuilder.java
-        return builder.reverse().toString() //TODO: this isn't right, we need a custom reverse builder (this will result in **tset** instead of **test**)
+        return builder.reverse().toString()
     }
 
     fun toSpanned(): Spanned {
@@ -41,7 +39,7 @@ class MarkdownDocument {
     }
 
     /**
-     * @return The last index in `spans` used.  If this is a leaf node, the retun value will be the same as `position`
+     * @return The last index in `spans` used.  If this is a leaf node, the return value will be the same as `position`
      */
     protected fun populateElements(spanned: Spanned, spans: List<Any>, position: Int, parent: MarkdownElement) : Int {
         var span: Any = spans[position]
@@ -58,6 +56,12 @@ class MarkdownDocument {
         //If the span has children then we need to split it in to corresponding elements
         var element = MarkdownElement(parent, getSpanType(span), null)
         parent.addChild(element)
+
+        return populateChildrenElements(spanned, spans, position, element, spanStart)
+    }
+
+    //TODO: characters not contained in a child span are removed (this is also a problem at the top level)
+    protected fun populateChildrenElements(spanned: Spanned, spans: List<Any>, position: Int, parent: MarkdownElement, parentStart: Int) : Int {
         var workingPosition = position +1
 
         while (workingPosition < spans.size) {
@@ -65,12 +69,11 @@ class MarkdownDocument {
             var childEnd = spanned.getSpanEnd(child)
 
             //If the child ends before or at the same spot the span starts then we have reached the end of this pass
-            if (spanStart >= childEnd) {
-                break;
+            if (parentStart >= childEnd) {
+                break
             }
 
-            //TODO: characters not contained in a child span are removed (this is also a problem at the top level)
-            workingPosition = populateElements(spanned, spans, workingPosition, element) +1
+            workingPosition = populateElements(spanned, spans, workingPosition, parent) +1
         }
 
         return workingPosition
@@ -92,12 +95,8 @@ class MarkdownDocument {
         builder.append(getSpanTag(element))
     }
 
-    protected fun findAllSpans(spanned: Spanned): MutableList<Any> {
-        return LinkedList(Arrays.asList(*spanned.getSpans(0, spanned.length, Any::class.java)))
-    }
-
     protected fun findAllSpans(spanned: Spanned, comparator: Comparator<Any>): List<Any> {
-        val spans = findAllSpans(spanned)
+        val spans = LinkedList(Arrays.asList(*spanned.getSpans(0, spanned.length, Any::class.java)))
         if (spans.isEmpty()) {
             return spans
         }
@@ -144,7 +143,12 @@ class MarkdownDocument {
         var spanEnd = spanned.getSpanEnd(span)
         var spanStart = spanned.getSpanStart(span)
 
-        return spanned.substring(spanStart, spanEnd)
+        return escapeString(spanned.substring(spanStart, spanEnd))
+    }
+
+    protected fun escapeString(unescapedString: String) : String {
+        //TODO: don't forget to escape non-MD characters (e.g. * in text should be \*)
+        return unescapedString
     }
 
     /**
