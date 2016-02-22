@@ -13,7 +13,6 @@ open class MarkupDocument() {
     constructor(spanned: Spanned) : this() {
         var spans = findRelevantSpans(spanned, IndexSpanComparator(spanned))
         parseSpanned(spanned, null, spans, 0, spanned.length -1, rootElement)
-        Log.d("MarkupDocument", "end");
     }
 
     //Inclusive indexes, parse moving from start to end (e.g. 0 to 100)
@@ -22,7 +21,7 @@ open class MarkupDocument() {
 
         //Iterate through the range looking for collisions
         var index = startIndex -1
-        while (++index < endIndex) {
+        while (++index <= endIndex) {
             //Finds any spans that contain the current index, if none exists append the character at the index
             var collisionSpans = findSpansForIndex(index, spanned, spans)
             if (collisionSpans.isEmpty()) {
@@ -32,14 +31,14 @@ open class MarkupDocument() {
                     parent.addChild(workingTextElement)
                 }
 
-                workingTextElement.text = "${workingTextElement.text.orEmpty()}${spanned.substring(index, index+1)}"
+                workingTextElement.text = "${workingTextElement.text.orEmpty()}${spanned[index]}"
                 continue
             }
 
             //If there is only a single span collision, use that span as the currentSpan and recurse
             if (collisionSpans.size == 1) {
-                index = parseSpanned(spanned, collisionSpans[0], listOf(), index, spanned.getSpanEnd(collisionSpans[0]), parent)
                 workingTextElement = null
+                index = parseSpanned(spanned, collisionSpans[0], listOf(), index, spanned.getSpanEnd(collisionSpans[0]), parent)
                 continue
             }
 
@@ -55,7 +54,7 @@ open class MarkupDocument() {
             index = parseSpanned(spanned, containingSpan, collisionSpans, index, spanned.getSpanEnd(containingSpan), spanElement)
         }
 
-        return index
+        return index -1
     }
 
     /**
