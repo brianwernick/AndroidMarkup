@@ -18,9 +18,7 @@ open class MarkupDocument() {
 
     //Inclusive indexes, parse moving from start to end (e.g. 0 to 100)
     protected fun parseSpanned(spanned: Spanned, currentSpan: Any?, spans: List<Any>, startIndex: Int, endIndex: Int, parent: MarkupElement) : Int {
-        var workingElement = MarkupElement(parent) //TODO always adding a workingElement isn't correct since it may never be used (e.g. **bold** won't use it)
-        currentSpan?.let { workingElement.spanType = getSpanType(currentSpan) }
-        parent.addChild(workingElement)
+        var workingTextElement : MarkupElement? = null
 
         //Iterate through the range looking for collisions
         var index = startIndex -1
@@ -28,20 +26,33 @@ open class MarkupDocument() {
             //Finds any spans that contain the current index, if none exists append the character at the index
             var collisionSpans = findSpansForIndex(index, spanned, spans)
             if (collisionSpans.isEmpty()) {
-                workingElement.text = "${workingElement.text.orEmpty()}${spanned.substring(index, index+1)}"
+                if (workingTextElement == null) {
+                    workingTextElement = MarkupElement(parent)
+                    currentSpan?.let { workingTextElement?.spanType = getSpanType(currentSpan) }
+                    parent.addChild(workingTextElement)
+                }
+
+                workingTextElement.text = "${workingTextElement.text.orEmpty()}${spanned.substring(index, index+1)}"
                 continue
             }
 
             //If there is only a single span collision, use that span as the currentSpan and recurse
             if (collisionSpans.size == 1) {
                 index = parseSpanned(spanned, collisionSpans[0], listOf(), index, spanned.getSpanEnd(collisionSpans[0]), parent)
+                workingTextElement = null
                 continue
             }
 
             //If there are multiple span collisions, find the containing span and use that as the 'currentSpan' argument
             var containingSpan = findContainingSpan(spanned, collisionSpans)
             collisionSpans.remove(containingSpan)
-            index = parseSpanned(spanned, containingSpan, collisionSpans, index, spanned.getSpanEnd(containingSpan), parent)
+            workingTextElement = null
+
+            var spanElement = MarkupElement(parent)
+            spanElement.spanType = getSpanType(containingSpan)
+            parent.addChild(spanElement)
+
+            index = parseSpanned(spanned, containingSpan, collisionSpans, index, spanned.getSpanEnd(containingSpan), spanElement)
         }
 
         return index
@@ -79,7 +90,7 @@ open class MarkupDocument() {
 
     /**
      * Finds all spans that are used for Markup processing, filtering out
-     * unused spans such as those used by the [EditText] for marking selection
+     * unused spans such as those used by the EditText for marking selection
      */
     protected fun findRelevantSpans(spanned: Spanned, comparator: Comparator<Any>): List<Any> {
         val spans = LinkedList(Arrays.asList(*spanned.getSpans(0, spanned.length, Any::class.java)))

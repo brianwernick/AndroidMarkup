@@ -42,8 +42,9 @@ class MarkdownDocument : MarkupDocument {
         when (element.spanType) {
             SpanType.BOLD -> return BOLD_TAG
             SpanType.ITALIC -> return ITALICS_TAG
-        //TODO: lists
         }
+
+        //TODO: lists
 
         return ""
     }
