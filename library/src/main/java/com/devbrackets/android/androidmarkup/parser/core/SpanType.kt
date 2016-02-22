@@ -7,9 +7,10 @@ package com.devbrackets.android.androidmarkup.parser.core
  */
 object SpanType {
     const val UNKNOWN = 0
-    const val BOLD = 1
-    const val ITALIC = 2
-    const val ORDERED_LIST = 3
-    const val UNORDERED_LIST = 4
+    const val TEXT = 1
+    const val BOLD = 2
+    const val ITALIC = 3
+    const val ORDERED_LIST = 4
+    const val UNORDERED_LIST = 5
     const val MAX_SPAN_TYPE = UNORDERED_LIST
 }
