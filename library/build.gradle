@@ -52,6 +52,12 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/kotlin']
+        }
+    }
 }
 
 // ======== MAVEN DEPLOY to local cache or nexus repo (to make accessible to local projects) (command: ./gradlew clean aRel uploadArchives) ========
