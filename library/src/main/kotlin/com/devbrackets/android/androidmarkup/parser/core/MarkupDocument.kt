@@ -3,7 +3,6 @@ package com.devbrackets.android.androidmarkup.parser.core
 import android.graphics.Typeface
 import android.text.Spanned
 import android.text.style.StyleSpan
-import android.util.Log
 import com.devbrackets.android.androidmarkup.text.style.ListSpan
 import java.util.*
 
@@ -38,7 +37,7 @@ open class MarkupDocument() {
             //If there is only a single span collision, use that span as the currentSpan and recurse
             if (collisionSpans.size == 1) {
                 workingTextElement = null
-                index = parseSpanned(spanned, collisionSpans[0], listOf(), index, spanned.getSpanEnd(collisionSpans[0]), parent)
+                index = parseSpanned(spanned, collisionSpans[0], listOf(), index, spanned.getSpanEnd(collisionSpans[0]) -1, parent)
                 continue
             }
 
@@ -51,9 +50,10 @@ open class MarkupDocument() {
             spanElement.spanType = getSpanType(containingSpan)
             parent.addChild(spanElement)
 
-            index = parseSpanned(spanned, containingSpan, collisionSpans, index, spanned.getSpanEnd(containingSpan), spanElement)
+            index = parseSpanned(spanned, containingSpan, collisionSpans, index, spanned.getSpanEnd(containingSpan) -1, spanElement)
         }
 
+        //Subtracts 1 due to the index being incremented before the comparison
         return index -1
     }
 
@@ -79,7 +79,7 @@ open class MarkupDocument() {
     protected fun findSpansForIndex(index: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
         var collisionSpans = mutableListOf<Any>()
         for (span in spans) {
-            if (spanned.getSpanStart(span) <= index && spanned.getSpanEnd(span) >= index) {
+            if (spanned.getSpanStart(span) <= index && spanned.getSpanEnd(span)-1 >= index) {
                 collisionSpans.add(span)
             }
         }
