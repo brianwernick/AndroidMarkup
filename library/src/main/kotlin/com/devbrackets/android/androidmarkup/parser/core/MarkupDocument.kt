@@ -1,6 +1,7 @@
 package com.devbrackets.android.androidmarkup.parser.core
 
 import android.graphics.Typeface
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.StyleSpan
 import com.devbrackets.android.androidmarkup.text.style.ListSpan
@@ -14,8 +15,33 @@ open class MarkupDocument() {
         parseSpanned(spanned, spans, 0, spanned.length -1, rootElement)
     }
 
+    open fun toSpanned() : Spanned {
+        var spanned = SpannableStringBuilder("")
+        toSpanned(spanned, rootElement)
+
+        return spanned
+    }
+
+    open protected fun toSpanned(builder: SpannableStringBuilder, parent: MarkupElement) {
+        var startIndex = builder.length
+        parent.text?.let {
+            builder.append(it)
+        }
+
+        for (element in parent.children) {
+            toSpanned(builder, element)
+        }
+
+        var endIndex = builder.length
+        var spanObj = getSpanObject(parent.spanType)
+
+        spanObj?.let {
+            builder.setSpan(it, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+
     //Inclusive indexes, parse moving from start to end (e.g. 0 to 100)
-    protected fun parseSpanned(spanned: Spanned, spans: List<Any>, startIndex: Int, endIndex: Int, parent: MarkupElement) : Int {
+    open protected fun parseSpanned(spanned: Spanned, spans: List<Any>, startIndex: Int, endIndex: Int, parent: MarkupElement) : Int {
         var workingTextElement : MarkupElement? = null
 
         //Iterate through the range looking for collisions
@@ -53,7 +79,7 @@ open class MarkupDocument() {
     /**
      * Finds the span that contains all other spans in the `spans`
      */
-    protected fun findContainingSpan(spanned: Spanned, spans: List<Any>) : Any {
+    open protected fun findContainingSpan(spanned: Spanned, spans: List<Any>) : Any {
         var currentContainer = spans[0]
         var currentSpanStart = spanned.getSpanStart(currentContainer)
         var currentSpanEnd = spanned.getSpanEnd(currentContainer)
@@ -69,7 +95,7 @@ open class MarkupDocument() {
         return currentContainer
     }
 
-    protected fun findSpansForIndex(index: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
+    open protected fun findSpansForIndex(index: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
         var collisionSpans = mutableListOf<Any>()
         for (span in spans) {
             if (spanned.getSpanStart(span) <= index && spanned.getSpanEnd(span)-1 >= index) {
@@ -80,7 +106,7 @@ open class MarkupDocument() {
         return collisionSpans
     }
 
-    protected fun findSpansForRange(startIndex: Int, endIndex: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
+    open protected fun findSpansForRange(startIndex: Int, endIndex: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
         var collisionSpans = mutableListOf<Any>()
         for (span in spans) {
             if (spanned.getSpanStart(span) >= startIndex && spanned.getSpanEnd(span) <= endIndex) {
@@ -95,7 +121,7 @@ open class MarkupDocument() {
      * Finds all spans that are used for Markup processing, filtering out
      * unused spans such as those used by the EditText for marking selection
      */
-    protected fun findRelevantSpans(spanned: Spanned, comparator: Comparator<Any>): List<Any> {
+    open protected fun findRelevantSpans(spanned: Spanned, comparator: Comparator<Any>): List<Any> {
         val spans = LinkedList(Arrays.asList(*spanned.getSpans(0, spanned.length, Any::class.java)))
         if (spans.isEmpty()) {
             return spans
@@ -113,7 +139,7 @@ open class MarkupDocument() {
         return spans
     }
 
-    protected fun supportedSpan(span: Any): Boolean {
+    open protected fun supportedSpan(span: Any): Boolean {
         when (span) {
             is StyleSpan -> return true
             is ListSpan -> return true
@@ -121,7 +147,7 @@ open class MarkupDocument() {
         }
     }
 
-    protected fun getSpanType(span: Any): Int {
+    open protected fun getSpanType(span: Any): Int {
         when (span) {
             is StyleSpan -> return if (span.style == Typeface.BOLD) SpanType.BOLD else SpanType.ITALIC
             is ListSpan -> return if (span.type == ListSpan.Type.BULLET) SpanType.UNORDERED_LIST else SpanType.ORDERED_LIST
@@ -129,11 +155,21 @@ open class MarkupDocument() {
         }
     }
 
+    open protected fun getSpanObject(spanType: Int) : Any? {
+        when (spanType) {
+            SpanType.BOLD -> return StyleSpan(Typeface.BOLD)
+            SpanType.ITALIC -> return StyleSpan(Typeface.ITALIC)
+            SpanType.ORDERED_LIST -> return ListSpan(ListSpan.Type.NUMERICAL)
+            SpanType.UNORDERED_LIST -> return ListSpan(ListSpan.Type.BULLET)
+            else -> return null
+        }
+    }
+
     /**
      * Used to sort the spans so that the span the ends last (greatest value)
      * will be listed first
      */
-    protected class IndexSpanComparator(private val spanned: Spanned) : Comparator<Any> {
+    open protected class IndexSpanComparator(private val spanned: Spanned) : Comparator<Any> {
         override fun compare(lhs: Any, rhs: Any): Int {
             return spanned.getSpanEnd(lhs) - spanned.getSpanEnd(rhs)
         }

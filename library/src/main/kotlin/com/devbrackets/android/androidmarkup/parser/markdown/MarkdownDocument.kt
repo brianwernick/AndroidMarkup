@@ -1,7 +1,6 @@
 package com.devbrackets.android.androidmarkup.parser.markdown
 
 import android.text.Spanned
-import android.text.SpannedString
 import com.devbrackets.android.androidmarkup.parser.core.MarkupDocument
 import com.devbrackets.android.androidmarkup.parser.core.MarkupElement
 import com.devbrackets.android.androidmarkup.parser.core.SpanType
@@ -11,7 +10,7 @@ class MarkdownDocument : MarkupDocument {
     constructor(spanned: Spanned) : super(spanned)
 
     constructor(markdown: String) : super() {
-        //TODO
+        //TODO: convert to the intermediate map
     }
 
     fun toMarkdown(): String {
@@ -21,12 +20,8 @@ class MarkdownDocument : MarkupDocument {
         return builder.toString()
     }
 
-    fun toSpanned(): Spanned {
-        return SpannedString("")
-    }
-
     protected fun toMarkdown(element: MarkupElement, builder: StringBuilder) {
-        //Appends the closing tag
+        //Appends the opening tag
         builder.append(getSpanTag(element))
         builder.append(element.text.orEmpty())
 
@@ -34,7 +29,7 @@ class MarkdownDocument : MarkupDocument {
             toMarkdown(child, builder)
         }
 
-        //Appends the opening tag
+        //Appends the closing tag
         builder.append(getSpanTag(element))
     }
 
