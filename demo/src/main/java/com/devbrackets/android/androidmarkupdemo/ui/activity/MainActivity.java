@@ -15,7 +15,6 @@ import com.devbrackets.android.androidmarkupdemo.ui.widget.MarkupControls;
 public class MainActivity extends AppCompatActivity {
 
     private MarkupEditText markupEditText;
-    private MarkupControls markupControls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViews() {
         markupEditText = (MarkupEditText)findViewById(R.id.markup_edit_text);
-        markupControls = (MarkupControls)findViewById(R.id.markup_controls);
+        MarkupControls markupControls = (MarkupControls) findViewById(R.id.markup_controls);
 
-        markupEditText.setMarkupParser(new MarkdownParser()); //TODO temp
+        markupEditText.setMarkupParser(new MarkdownParser());
         markupControls.setMarkupEditText(markupEditText);
     }
 

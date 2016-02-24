@@ -4,9 +4,9 @@ import android.content.Context
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import com.devbrackets.android.androidmarkup.R
+import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
 import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
 import com.devbrackets.android.androidmarkup.parser.markdown.MarkdownParser
-import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
 
 class MarkupTextView : AppCompatTextView {
     lateinit var markupParser: MarkupParser
@@ -30,7 +30,7 @@ class MarkupTextView : AppCompatTextView {
     }
 
     fun setMarkup(markup: String) {
-        text = markupParser?.toSpanned(markup)
+        text = markupParser.toSpanned(markup)
     }
 
     /**
@@ -50,8 +50,7 @@ class MarkupTextView : AppCompatTextView {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MarkupTextView) ?: return false
 
         //Updates the Parser
-        val parserAttr = ParserAttr.get(typedArray.getInteger(R.styleable.MarkupTextView_parser, 0))
-        setParser(parserAttr)
+        setParser(ParserAttr.get(typedArray.getInteger(R.styleable.MarkupTextView_parser, 0)))
 
         typedArray.recycle()
         return true

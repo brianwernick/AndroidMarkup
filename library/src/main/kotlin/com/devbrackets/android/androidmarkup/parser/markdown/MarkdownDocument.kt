@@ -5,6 +5,10 @@ import com.devbrackets.android.androidmarkup.parser.core.MarkupDocument
 import com.devbrackets.android.androidmarkup.parser.core.MarkupElement
 import com.devbrackets.android.androidmarkup.parser.core.SpanType
 
+/**
+ * This markdown document and associated parsing follows the
+ * spec defined by [spec.commonmark.org/0.24/](http://spec.commonmark.org/0.24/)
+ */
 class MarkdownDocument : MarkupDocument {
 
     constructor(spanned: Spanned) : super(spanned)

@@ -5,7 +5,11 @@ import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
 
 
 /**
- * A MarkupParser for the Markdown protocol.
+ * A MarkupParser for the Markdown protocol specified at
+ * http://commonmark.org/.  The common mark specification is
+ * a strongly defined specification of the original Markdown
+ * created by John Gruber (http://daringfireball.net/projects/markdown/)
+ *
  * NOTE: currently this only supports a small subset of the format
  */
 class MarkdownParser : MarkupParser() {

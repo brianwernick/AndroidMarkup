@@ -4,10 +4,10 @@ import android.content.Context
 import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
 import com.devbrackets.android.androidmarkup.R
-import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
-import com.devbrackets.android.androidmarkup.parser.markdown.MarkdownParser
 import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
 import com.devbrackets.android.androidmarkup.parser.core.SpanType
+import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
+import com.devbrackets.android.androidmarkup.parser.markdown.MarkdownParser
 
 /**
  * A WYSIWYG EditText for Markup languages such as HTML or
@@ -15,10 +15,6 @@ import com.devbrackets.android.androidmarkup.parser.core.SpanType
  */
 class MarkupEditText : AppCompatEditText {
     lateinit var markupParser: MarkupParser
-
-    var markup: String
-        get() = markupParser.fromSpanned(text)
-        set(markup) = setText(markupParser.toSpanned(markup))
 
     constructor(context: Context) : super(context) {
         init(context, null)
@@ -48,6 +44,14 @@ class MarkupEditText : AppCompatEditText {
         markupParser.updateSpan(text, SpanType.UNORDERED_LIST, selectionStart, selectionEnd)
     }
 
+    fun getMarkup() : String {
+        return markupParser.fromSpanned(text)
+    }
+
+    fun setMarkup(markup: String) {
+        setText(markupParser.toSpanned(markup))
+    }
+
     protected fun init(context: Context, attrs: AttributeSet?) {
         if (attrs == null || !readAttributes(context, attrs)) {
             markupParser = HtmlParser()
@@ -71,8 +75,7 @@ class MarkupEditText : AppCompatEditText {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MarkupTextView) ?: return false
 
         //Updates the Parser
-        val parserAttr = ParserAttr.get(typedArray.getInteger(R.styleable.MarkupTextView_parser, 0))
-        setParser(parserAttr)
+        setParser(ParserAttr.get(typedArray.getInteger(R.styleable.MarkupTextView_parser, 0)))
 
         typedArray.recycle()
         return true
