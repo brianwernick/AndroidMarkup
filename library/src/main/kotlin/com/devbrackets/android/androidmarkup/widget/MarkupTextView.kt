@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import com.devbrackets.android.androidmarkup.parser.core.MarkupParser
 import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
 
-class MarkupTextView : AppCompatTextView {
+open class MarkupTextView : AppCompatTextView {
     var markupParser: MarkupParser = HtmlParser()
 
     constructor(context: Context) : super(context) {}
@@ -15,7 +15,7 @@ class MarkupTextView : AppCompatTextView {
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
 
-    fun setMarkup(markup: String) {
+    open fun setMarkup(markup: String) {
         text = markupParser.toSpanned(markup)
     }
 }

@@ -4,6 +4,7 @@ import android.text.Spanned
 import com.devbrackets.android.androidmarkup.parser.core.MarkupDocument
 import com.devbrackets.android.androidmarkup.parser.core.MarkupElement
 import com.devbrackets.android.androidmarkup.parser.core.SpanType
+import org.commonmark.parser.Parser
 
 /**
  * This markdown document and associated parsing follows the
@@ -14,7 +15,11 @@ class MarkdownDocument : MarkupDocument {
     constructor(spanned: Spanned) : super(spanned)
 
     constructor(markdown: String) : super() {
-        //TODO: convert to the intermediate map
+        val parser = Parser.Builder().build()
+        val converter = MarkupDocumentConverter.Builder().build();
+
+        rootElement.children.clear()
+        rootElement.addChild(converter.convert(parser.parse(markdown)))
     }
 
     fun toMarkdown(): String {
@@ -27,7 +32,7 @@ class MarkdownDocument : MarkupDocument {
     protected fun toMarkdown(element: MarkupElement, builder: StringBuilder) {
         //Appends the opening tag
         builder.append(getSpanTag(element))
-        builder.append(element.text.orEmpty())
+        builder.append(escapeString(element.text.orEmpty()))
 
         for (child in element.children) {
             toMarkdown(child, builder)
@@ -43,7 +48,7 @@ class MarkdownDocument : MarkupDocument {
             SpanType.ITALIC -> return ITALICS_TAG
         }
 
-        //TODO: lists
+        //TODO: lists (and other block types)
 
         return ""
     }
