@@ -21,14 +21,14 @@ The latest AAR (Android Archive) files can be downloaded from JCenter [AndroidMa
 Or included in your gradle dependencies
 
 ```groovy
-compile 'com.devbrackets.android:androidmarkup:0.1.0'
+compile 'com.devbrackets.android:androidmarkup:0.2.0'
 ```
 
 
 License
 -------
 
-    Copyright 2015 Brian Wernick
+    Copyright 2016 Brian Wernick
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -43,7 +43,14 @@ License
     limitations under the License.
 
 
+Attribution
+-----------
+Uses [Kotlin](https://github.com/JetBrains/kotlin) licensed under [Apache 2.0][Apache 2.0]
+Uses [CommonMark-java](https://github.com/atlassian/commonmark-java) licensed under [2-Clause BSD](https://opensource.org/licenses/BSD-2-Clause)
+Uses [AppCompat-v7](http://developer.android.com/tools/support-library/features.html#v7-appcompat) licensed under [Apache 2.0][Apache 2.0]
+
 
  [1]: https://bintray.com/brianwernick/maven/AndroidMarkup/view#files
  [2]: http://devbrackets.com/dev/libs/androidmarkup.html
  [3]: http://devbrackets.com/dev/libs/docs/androidmarkup/0.1.0/index.html
+ [Apache 2.0]: https://opensource.org/licenses/Apache-2.0

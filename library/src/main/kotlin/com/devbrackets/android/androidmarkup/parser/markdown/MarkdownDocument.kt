@@ -16,7 +16,7 @@ class MarkdownDocument : MarkupDocument {
 
     constructor(markdown: String) : super() {
         val parser = Parser.Builder().build()
-        val converter = MarkupDocumentConverter.Builder().build();
+        val converter = MarkdownDocumentConverter.Builder().build();
 
         rootElement.children.clear()
         rootElement.addChild(converter.convert(parser.parse(markdown)))
