@@ -66,7 +66,7 @@ class TestFromMd {
         val testString = "Some **Bold** and _Italic_ text"
 
         var spanned = parser.toSpanned(testString)
-        Assert.assertEquals(spanned.toString(), "Some Bold and Italic text")
+        Assert.assertEquals("Some Bold and Italic text", spanned.toString())
 
         var spans = spanned.getSpans(0, spanned.length, StyleSpan::class.java)
         Assert.assertTrue(spans.size == 2)
