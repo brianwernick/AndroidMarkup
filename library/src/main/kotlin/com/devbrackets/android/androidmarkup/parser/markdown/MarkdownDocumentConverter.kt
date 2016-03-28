@@ -126,7 +126,11 @@ open class MarkdownDocumentConverter {
         }
 
         override fun visit(text: Text) {
-            currentElement.text = text.literal.orEmpty()
+            var element = MarkupElement(currentElement)
+            element.spanType = SpanType.TEXT
+            currentElement.addChild(element)
+
+            element.text = text.literal.orEmpty()
         }
     }
 }

@@ -27,7 +27,7 @@ dependencies {
     compile 'com.atlassian.commonmark:commonmark:0.4.1'
 
 
-    // Unit test dependencies below
+    // Test dependencies below
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.android.support.test:runner:0.5'
