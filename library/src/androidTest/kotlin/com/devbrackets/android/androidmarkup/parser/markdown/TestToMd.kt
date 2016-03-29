@@ -50,7 +50,7 @@ class TestToMd {
         spanned.setSpan(ListSpan(ListSpan.Type.NUMERICAL), 0, sourceString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         val resultString = parser.fromSpanned(spanned)
-        Assert.assertEquals("", resultString) //todo
+        Assert.assertEquals("0. line one\n0. line two", resultString)
     }
 
     @Test
@@ -60,6 +60,6 @@ class TestToMd {
         spanned.setSpan(ListSpan(ListSpan.Type.BULLET), 0, sourceString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         val resultString = parser.fromSpanned(spanned)
-        Assert.assertEquals("", resultString) //todo
+        Assert.assertEquals("* line one\n* line two", resultString)
     }
 }

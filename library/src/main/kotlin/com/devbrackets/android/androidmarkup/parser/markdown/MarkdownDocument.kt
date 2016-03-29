@@ -61,11 +61,31 @@ open class MarkdownDocument : MarkupDocument {
     }
 
     protected open fun convertOrderedListSpan(element: MarkupElement, builder: StringBuilder) {
-        //TODO
+        val tempBuilder = StringBuilder()
+        convertChildren(element, tempBuilder)
+
+        var lines = tempBuilder.toString().orEmpty().split("\n")
+        for (i in lines.indices) {
+            builder.append(ORDERED_LIST_ITEM)
+            builder.append(escapeString(lines[i]))
+            if (i != lines.size -1) {
+                builder.appendln()
+            }
+        }
     }
 
     protected open fun convertUnOrderedListSpan(element: MarkupElement, builder: StringBuilder) {
-        //TODO
+        val tempBuilder = StringBuilder()
+        convertChildren(element, tempBuilder)
+
+        var lines = tempBuilder.toString().orEmpty().split("\n")
+        for (i in lines.indices) {
+            builder.append(UNORDERED_LIST_ITEM)
+            builder.append(escapeString(lines[i]))
+            if (i != lines.size -1) {
+                builder.appendln()
+            }
+        }
     }
 
     protected open fun convertChildren(element: MarkupElement, builder: StringBuilder) : Boolean {
@@ -88,5 +108,7 @@ open class MarkdownDocument : MarkupDocument {
     companion object {
         const val BOLD_TAG: String = "**"
         const val ITALICS_TAG: String = "_"
+        const val ORDERED_LIST_ITEM = "0. "
+        const val UNORDERED_LIST_ITEM = "* "
     }
 }
