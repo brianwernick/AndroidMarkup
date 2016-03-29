@@ -45,9 +45,9 @@ License
 
 Attribution
 -----------
-Uses [Kotlin](https://github.com/JetBrains/kotlin) licensed under [Apache 2.0][Apache 2.0]
-Uses [CommonMark-java](https://github.com/atlassian/commonmark-java) licensed under [2-Clause BSD](https://opensource.org/licenses/BSD-2-Clause)
-Uses [AppCompat-v7](http://developer.android.com/tools/support-library/features.html#v7-appcompat) licensed under [Apache 2.0][Apache 2.0]
+* Uses [Kotlin](https://github.com/JetBrains/kotlin) licensed under [Apache 2.0][Apache 2.0]
+* Uses [CommonMark-java](https://github.com/atlassian/commonmark-java) licensed under [2-Clause BSD](https://opensource.org/licenses/BSD-2-Clause)
+* Uses [AppCompat-v7](http://developer.android.com/tools/support-library/features.html#v7-appcompat) licensed under [Apache 2.0][Apache 2.0]
 
 
  [1]: https://bintray.com/brianwernick/maven/AndroidMarkup/view#files
