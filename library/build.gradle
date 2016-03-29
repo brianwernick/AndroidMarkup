@@ -90,7 +90,8 @@ uploadArchives {
     }
 }
 
-// ======= BINTRAY DEPLOY (command: $ ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false) ====
+// ======= BINTRAY DEPLOY (command: $ ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false -x mavenAndroidJavadocs) ====
+// "-x mavenAndroidJavadocs" added because this library is in Kotlin (see https://github.com/novoda/bintray-release/issues/71)
 publish {
     groupId = libraryGroupId
     artifactId = libraryBaseName

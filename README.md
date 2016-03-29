@@ -4,8 +4,6 @@ Android Markup
 An Android Widget and basic parser for supporting WYSIWYG editing of text in
 to markup languages such as HTML or Markdown
 
-NOTE: This library is a work in progress and has NOT been published
-
 
 Website And Documentation
 -------
@@ -20,10 +18,17 @@ The latest AAR (Android Archive) files can be downloaded from JCenter [AndroidMa
 
 Or included in your gradle dependencies
 
-```groovy
-compile 'com.devbrackets.android:androidmarkup:0.2.0'
-```
+```gradle
+repositories {
+    //Because this is an early release, it hasn't been uploaded to jCenter
+    maven { url 'https://dl.bintray.com/brianwernick/maven' }
+}
 
+dependencies {
+    //...
+    compile 'com.devbrackets.android:androidmarkup:0.2.0'
+}
+```
 
 License
 -------
@@ -52,5 +57,5 @@ Attribution
 
  [1]: https://bintray.com/brianwernick/maven/AndroidMarkup/view#files
  [2]: http://devbrackets.com/dev/libs/androidmarkup.html
- [3]: http://devbrackets.com/dev/libs/docs/androidmarkup/0.1.0/index.html
+ [3]: http://devbrackets.com/dev/libs/docs/androidmarkup/0.2.0/index.html
  [Apache 2.0]: https://opensource.org/licenses/Apache-2.0
