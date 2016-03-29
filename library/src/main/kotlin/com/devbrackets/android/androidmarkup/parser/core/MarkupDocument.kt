@@ -52,6 +52,7 @@ open class MarkupDocument() {
             if (collisionSpans.isEmpty()) {
                 if (workingTextElement == null) {
                     workingTextElement = MarkupElement(parent)
+                    workingTextElement.spanType = SpanType.TEXT
                     parent.addChild(workingTextElement)
                 }
 
