@@ -101,8 +101,7 @@ open class MarkdownDocument : MarkupDocument {
     }
 
     protected open fun escapeString(unescapedString: String): String {
-        //TODO: don't forget to escape non-MD characters (e.g. * in text should be \*)
-        return unescapedString
+        return unescapedString.replace(ESCAPE_CHARS_REGEX, transform = {"\\${it.value}"})
     }
 
     companion object {
@@ -110,5 +109,8 @@ open class MarkdownDocument : MarkupDocument {
         const val ITALICS_TAG: String = "_"
         const val ORDERED_LIST_ITEM = "0. "
         const val UNORDERED_LIST_ITEM = "* "
+
+        //Also known as ASCII punctuation characters
+        val ESCAPE_CHARS_REGEX = Regex("[\\!\"#\\$%&'\\(\\)\\*\\+,\\-\\./:;\\<\\=\\>\\?@\\[\\]\\^_`\\{\\|\\}~\\\\]")
     }
 }

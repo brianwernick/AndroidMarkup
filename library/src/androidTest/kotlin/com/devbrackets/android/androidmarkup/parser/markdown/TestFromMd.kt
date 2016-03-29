@@ -22,6 +22,15 @@ class TestFromMd {
     }
 
     @Test
+    fun specialCharacters() {
+        val testString = "some escaped special characters \\* \\- \\+ \\\\"
+        var spanned = parser.toSpanned(testString)
+        var spans = spanned.getSpans(0, spanned.length, Any::class.java)
+        Assert.assertTrue(spans.size == 0)
+        Assert.assertEquals("some escaped special characters * - + \\", spanned.toString())
+    }
+
+    @Test
     fun simpleItalic() {
         val italicString = "_some italic text_"
 

@@ -24,7 +24,6 @@ open class MarkdownDocumentConverter {
         }
     }
 
-    //TODO: actually use the visitor to convert
     open class ConverterVisitor : AbstractVisitor() {
         val rootElement = MarkupElement(null)
         var currentElement = rootElement
