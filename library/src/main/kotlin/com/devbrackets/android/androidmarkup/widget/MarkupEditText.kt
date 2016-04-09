@@ -11,7 +11,7 @@ import com.devbrackets.android.androidmarkup.parser.html.HtmlParser
  * A WYSIWYG EditText for Markup languages such as HTML or
  * Markdown.  This leaves the UI up to the implementing application.
  */
-class MarkupEditText : AppCompatEditText {
+open class MarkupEditText : AppCompatEditText {
     var markupParser: MarkupParser = HtmlParser()
 
     constructor(context: Context) : super(context) {}
@@ -20,27 +20,27 @@ class MarkupEditText : AppCompatEditText {
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
 
-    fun toggleBold() {
+    open fun toggleBold() {
         markupParser.updateSpan(text, SpanType.BOLD, selectionStart, selectionEnd)
     }
 
-    fun toggleItalics() {
+    open fun toggleItalics() {
         markupParser.updateSpan(text, SpanType.ITALIC, selectionStart, selectionEnd)
     }
 
-    fun toggleOrderedList() {
+    open fun toggleOrderedList() {
         markupParser.updateSpan(text, SpanType.ORDERED_LIST, selectionStart, selectionEnd)
     }
 
-    fun toggleUnOrderedList() {
+    open fun toggleUnOrderedList() {
         markupParser.updateSpan(text, SpanType.UNORDERED_LIST, selectionStart, selectionEnd)
     }
 
-    fun getMarkup() : String {
+    open fun getMarkup() : String {
         return markupParser.fromSpanned(text)
     }
 
-    fun setMarkup(markup: String) {
+    open fun setMarkup(markup: String) {
         setText(markupParser.toSpanned(markup))
     }
 }
