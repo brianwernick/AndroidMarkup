@@ -4,7 +4,7 @@ apply plugin: 'bintray-release'
 apply plugin: 'kotlin-android'
 
 def versionMajor = 0
-def versionMinor = 2
+def versionMinor = 3
 def versionPatch = 0
 
 // Maven GAV
@@ -24,7 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
 
     //Markdown (CommonMark Spec)
-    compile 'com.atlassian.commonmark:commonmark:0.4.1'
+    compile 'com.atlassian.commonmark:commonmark:0.5.0'
 
 
     // Test dependencies below
