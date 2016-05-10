@@ -67,7 +67,7 @@ open class MarkdownDocument : MarkupDocument {
         var lines = tempBuilder.toString().orEmpty().split("\n")
         for (i in lines.indices) {
             builder.append(ORDERED_LIST_ITEM)
-            builder.append(escapeString(lines[i]))
+            builder.append(lines[i])
             if (i != lines.size -1) {
                 builder.appendln()
             }
@@ -81,7 +81,7 @@ open class MarkdownDocument : MarkupDocument {
         var lines = tempBuilder.toString().orEmpty().split("\n")
         for (i in lines.indices) {
             builder.append(UNORDERED_LIST_ITEM)
-            builder.append(escapeString(lines[i]))
+            builder.append(lines[i])
             if (i != lines.size -1) {
                 builder.appendln()
             }
