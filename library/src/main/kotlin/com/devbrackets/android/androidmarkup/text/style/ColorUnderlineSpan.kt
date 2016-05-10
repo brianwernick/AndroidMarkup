@@ -5,7 +5,7 @@ import android.text.TextPaint
 import android.text.style.CharacterStyle
 import android.text.style.UpdateAppearance
 
-class UnderlineSpan(@ColorInt var color: Int, var thickness: Float = 1.0f) : CharacterStyle(), UpdateAppearance {
+class ColorUnderlineSpan(@ColorInt var color: Int, var thickness: Float = 1.0f) : CharacterStyle(), UpdateAppearance {
     override fun updateDrawState(tp: TextPaint) {
         try {
             //NOTE: setUnderlineText is a public method, but is hidden in the SDK

@@ -64,12 +64,14 @@ open class MarkdownDocumentConverter {
             super.visit(indentedCodeBlock)
         }
 
-        override fun visit(listItem: ListItem) {
-            super.visit(listItem)
-        }
-
         override fun visit(paragraph: Paragraph) {
             super.visit(paragraph)
+
+            var element = MarkupElement(currentElement)
+            element.spanType = SpanType.TEXT
+            currentElement.addChild(element)
+
+            element.text = "\n"
         }
 
         override fun visit(orderedList: OrderedList) {
@@ -94,6 +96,10 @@ open class MarkdownDocumentConverter {
             visitChildren(bulletList)
 
             currentElement = parent
+        }
+
+        override fun visit(listItem: ListItem) {
+            super.visit(listItem)
         }
 
         override fun visit(emphasis: Emphasis) {

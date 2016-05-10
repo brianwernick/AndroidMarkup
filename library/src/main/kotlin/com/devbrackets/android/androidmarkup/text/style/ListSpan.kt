@@ -24,8 +24,12 @@ class ListSpan @JvmOverloads constructor(val type: ListSpan.Type = ListSpan.Type
         return 2 * bulletRadius + gapWidth
     }
 
-    //TODO only draw when coming from a \n (currently wrapping text will be bulleted)
     override fun drawLeadingMargin(canvas: Canvas, paint: Paint, marginPosition: Int, direction: Int, top: Int, baseline: Int, bottom: Int, text: CharSequence, start: Int, end: Int, first: Boolean, layout: Layout) {
+        var newItem = start == 0 || text[start -1].equals('\n');
+        if (!newItem) {
+            return;
+        }
+
         //Cache the style so our changes don't affect others
         val style = paint.style
 
@@ -52,7 +56,7 @@ class ListSpan @JvmOverloads constructor(val type: ListSpan.Type = ListSpan.Type
         if (bulletPath == null) {
             bulletPath = Path()
             // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
-            bulletPath!!.addCircle(0.0f, 0.0f, bulletRadius.toFloat(), Path.Direction.CW)
+            bulletPath?.addCircle(0.0f, 0.0f, bulletRadius.toFloat(), Path.Direction.CW)
         }
 
         canvas.save()
