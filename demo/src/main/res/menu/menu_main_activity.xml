@@ -5,4 +5,12 @@
         android:id="@+id/menu_show_markup"
         android:title="@string/menu_show_markup"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_store_markup"
+        android:title="@string/menu_store_markup"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_load_markup"
+        android:title="@string/menu_load_markup"
+        app:showAsAction="never"/>
 </menu>

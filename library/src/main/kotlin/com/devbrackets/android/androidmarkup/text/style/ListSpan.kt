@@ -1,6 +1,5 @@
 package com.devbrackets.android.androidmarkup.text.style
 
-import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -25,6 +24,7 @@ class ListSpan @JvmOverloads constructor(val type: ListSpan.Type = ListSpan.Type
         return 2 * bulletRadius + gapWidth
     }
 
+    //TODO only draw when coming from a \n (currently wrapping text will be bulleted)
     override fun drawLeadingMargin(canvas: Canvas, paint: Paint, marginPosition: Int, direction: Int, top: Int, baseline: Int, bottom: Int, text: CharSequence, start: Int, end: Int, first: Boolean, layout: Layout) {
         //Cache the style so our changes don't affect others
         val style = paint.style
@@ -38,7 +38,6 @@ class ListSpan @JvmOverloads constructor(val type: ListSpan.Type = ListSpan.Type
         paint.style = style
     }
 
-    @SuppressLint("NewApi")
     protected fun drawBulletMargin(canvas: Canvas, paint: Paint, marginPosition: Int, direction: Int, top: Int, baseline: Int, bottom: Int) {
         paint.style = Paint.Style.FILL
         val verticalCenter = (top + bottom) / 2
@@ -62,7 +61,6 @@ class ListSpan @JvmOverloads constructor(val type: ListSpan.Type = ListSpan.Type
         canvas.restore()
     }
 
-    @SuppressLint("NewApi")
     protected fun drawNumericalMargin(canvas: Canvas, paint: Paint, marginPosition: Int, direction: Int, top: Int, baseline: Int, bottom: Int) {
         if (baseline > lastBaseline) {
             lastBaseline = baseline

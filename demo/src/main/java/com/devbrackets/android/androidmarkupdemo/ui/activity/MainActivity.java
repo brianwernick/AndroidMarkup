@@ -15,6 +15,7 @@ import com.devbrackets.android.androidmarkupdemo.ui.widget.MarkupControls;
 public class MainActivity extends AppCompatActivity {
 
     private MarkupEditText markupEditText;
+    private String storedMarkup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +33,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_show_markup) {
-            showMarkup();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_show_markup:
+                showMarkup();
+                return true;
+            case R.id.menu_store_markup:
+                storedMarkup = markupEditText.getMarkup();
+                markupEditText.setText("");
+                return true;
+            case R.id.menu_load_markup:
+                markupEditText.setMarkup(storedMarkup);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

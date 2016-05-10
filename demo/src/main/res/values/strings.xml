@@ -2,4 +2,6 @@
     <string name="app_name">Android Markup Demo</string>
 
     <string name="menu_show_markup">Show Markup</string>
+    <string name="menu_store_markup">Store Markup</string>
+    <string name="menu_load_markup">Load Markup</string>
 </resources>

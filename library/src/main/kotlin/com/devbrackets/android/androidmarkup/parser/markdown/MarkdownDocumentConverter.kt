@@ -40,10 +40,6 @@ open class MarkdownDocumentConverter {
             super.visit(fencedCodeBlock)
         }
 
-        override fun visit(hardLineBreak: HardLineBreak) {
-            super.visit(hardLineBreak)
-        }
-
         override fun visit(heading: Heading) {
             super.visit(heading)
         }
@@ -130,6 +126,14 @@ open class MarkdownDocumentConverter {
             currentElement.addChild(element)
 
             element.text = text.literal.orEmpty()
+        }
+
+        override fun visit(hardLineBreak: HardLineBreak) {
+            var element = MarkupElement(currentElement)
+            element.spanType = SpanType.TEXT
+            currentElement.addChild(element)
+
+            element.text = "\n"
         }
     }
 }

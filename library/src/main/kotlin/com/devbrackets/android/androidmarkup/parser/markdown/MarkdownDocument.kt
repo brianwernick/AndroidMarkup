@@ -100,8 +100,16 @@ open class MarkdownDocument : MarkupDocument {
         return true
     }
 
+    /**
+     * Makes sure special ASCII punctuation and other formatting such
+     * as new lines are properly escaped for persistence.  the ASCII
+     * punctuation should always be escaped, however the new lines are
+     * persisted because this is used for a WYSIWYG editor.
+     */
     protected open fun escapeString(unescapedString: String): String {
-        return unescapedString.replace(ESCAPE_CHARS_REGEX, transform = {"\\${it.value}"})
+        var temp = unescapedString.replace(ESCAPE_CHARS_REGEX, transform = {"\\${it.value}"})
+        temp = temp.replace("\n", "&nbsp;  \n")
+        return temp;
     }
 
     companion object {
