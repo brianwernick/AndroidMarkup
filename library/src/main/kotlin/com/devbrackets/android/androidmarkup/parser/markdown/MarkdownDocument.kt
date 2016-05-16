@@ -64,7 +64,7 @@ open class MarkdownDocument : MarkupDocument {
         val tempBuilder = StringBuilder()
         convertChildren(element, tempBuilder)
 
-        var lines = tempBuilder.toString().orEmpty().split("\n")
+        val lines = tempBuilder.toString().orEmpty().split("\n")
         for (i in lines.indices) {
             builder.append(ORDERED_LIST_ITEM)
             builder.append(lines[i])
@@ -72,19 +72,27 @@ open class MarkdownDocument : MarkupDocument {
                 builder.appendln()
             }
         }
+
+        if (lines.isNotEmpty()) {
+            builder.appendln().appendln()
+        }
     }
 
     protected open fun convertUnOrderedListSpan(element: MarkupElement, builder: StringBuilder) {
         val tempBuilder = StringBuilder()
         convertChildren(element, tempBuilder)
 
-        var lines = tempBuilder.toString().orEmpty().split("\n")
+        val lines = tempBuilder.toString().orEmpty().split("\n")
         for (i in lines.indices) {
             builder.append(UNORDERED_LIST_ITEM)
             builder.append(lines[i])
             if (i != lines.size -1) {
                 builder.appendln()
             }
+        }
+
+        if (lines.isNotEmpty()) {
+            builder.appendln().appendln()
         }
     }
 
