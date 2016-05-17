@@ -28,6 +28,10 @@ open class MarkdownDocumentConverter {
         val rootElement = MarkupElement(null)
         var currentElement = rootElement
 
+        override fun visit(thematicBreak: ThematicBreak) {
+            super.visit(thematicBreak)
+        }
+
         override fun visit(blockQuote: BlockQuote) {
             super.visit(blockQuote)
         }
@@ -40,12 +44,12 @@ open class MarkdownDocumentConverter {
             super.visit(fencedCodeBlock)
         }
 
-        override fun visit(heading: Heading) {
-            super.visit(heading)
+        override fun visit(indentedCodeBlock: IndentedCodeBlock) {
+            super.visit(indentedCodeBlock)
         }
 
-        override fun visit(thematicBreak: ThematicBreak) {
-            super.visit(thematicBreak)
+        override fun visit(heading: Heading) {
+            super.visit(heading)
         }
 
         override fun visit(htmlInline: HtmlInline) {
@@ -60,14 +64,10 @@ open class MarkdownDocumentConverter {
             super.visit(image)
         }
 
-        override fun visit(indentedCodeBlock: IndentedCodeBlock) {
-            super.visit(indentedCodeBlock)
-        }
-
         override fun visit(paragraph: Paragraph) {
             super.visit(paragraph)
 
-            var element = MarkupElement(currentElement)
+            val element = MarkupElement(currentElement)
             element.spanType = SpanType.TEXT
             currentElement.addChild(element)
 
@@ -127,7 +127,7 @@ open class MarkdownDocumentConverter {
         }
 
         override fun visit(text: Text) {
-            var element = MarkupElement(currentElement)
+            val element = MarkupElement(currentElement)
             element.spanType = SpanType.TEXT
             currentElement.addChild(element)
 
@@ -135,7 +135,7 @@ open class MarkdownDocumentConverter {
         }
 
         override fun visit(hardLineBreak: HardLineBreak) {
-            var element = MarkupElement(currentElement)
+            val element = MarkupElement(currentElement)
             element.spanType = SpanType.TEXT
             currentElement.addChild(element)
 

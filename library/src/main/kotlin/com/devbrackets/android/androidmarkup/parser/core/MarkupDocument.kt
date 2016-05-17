@@ -11,19 +11,19 @@ open class MarkupDocument() {
     protected val rootElement: MarkupElement = MarkupElement(null)
 
     constructor(spanned: Spanned) : this() {
-        var spans = findRelevantSpans(spanned, IndexSpanComparator(spanned))
+        val spans = findRelevantSpans(spanned, IndexSpanComparator(spanned))
         parseSpanned(spanned, spans, 0, spanned.length -1, rootElement)
     }
 
     open fun toSpanned() : Spanned {
-        var spanned = SpannableStringBuilder("")
+        val spanned = SpannableStringBuilder("")
         toSpanned(spanned, rootElement)
 
         return spanned
     }
 
     open protected fun toSpanned(builder: SpannableStringBuilder, parent: MarkupElement) {
-        var startIndex = builder.length
+        val startIndex = builder.length
         parent.text?.let {
             builder.append(it)
         }
@@ -32,8 +32,8 @@ open class MarkupDocument() {
             toSpanned(builder, element)
         }
 
-        var endIndex = builder.length
-        var spanObj = getSpanObject(parent.spanType)
+        val endIndex = builder.length
+        val spanObj = getSpanObject(parent.spanType)
 
         spanObj?.let {
             builder.setSpan(it, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -61,12 +61,12 @@ open class MarkupDocument() {
             }
 
             //If there are multiple span collisions, find the containing span and use that as the 'currentSpan' argument
-            var containingSpan = findContainingSpan(spanned, collisionSpans)
+            val containingSpan = findContainingSpan(spanned, collisionSpans)
             collisionSpans = findSpansForRange(spanned.getSpanStart(containingSpan), spanned.getSpanEnd(containingSpan), spanned, spans)
             collisionSpans.remove(containingSpan)
             workingTextElement = null
 
-            var spanElement = MarkupElement(parent)
+            val spanElement = MarkupElement(parent)
             spanElement.spanType = getSpanType(containingSpan)
             parent.addChild(spanElement)
 
@@ -97,7 +97,7 @@ open class MarkupDocument() {
     }
 
     open protected fun findSpansForIndex(index: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
-        var collisionSpans = mutableListOf<Any>()
+        val collisionSpans = mutableListOf<Any>()
         for (span in spans) {
             if (spanned.getSpanStart(span) <= index && spanned.getSpanEnd(span)-1 >= index) {
                 collisionSpans.add(span)
@@ -108,7 +108,7 @@ open class MarkupDocument() {
     }
 
     open protected fun findSpansForRange(startIndex: Int, endIndex: Int, spanned: Spanned, spans: List<Any>) : MutableList<Any> {
-        var collisionSpans = mutableListOf<Any>()
+        val collisionSpans = mutableListOf<Any>()
         for (span in spans) {
             if (spanned.getSpanStart(span) >= startIndex && spanned.getSpanEnd(span) <= endIndex) {
                 collisionSpans.add(span)
@@ -129,7 +129,7 @@ open class MarkupDocument() {
         }
 
         //remove irrelevant span types
-        var iterator = spans.iterator()
+        val iterator = spans.iterator()
         while (iterator.hasNext()) {
             if (!supportedSpan(iterator.next())) {
                 iterator.remove()

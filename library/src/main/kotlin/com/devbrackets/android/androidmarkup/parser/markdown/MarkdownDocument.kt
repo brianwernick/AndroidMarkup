@@ -8,7 +8,7 @@ import org.commonmark.parser.Parser
 
 /**
  * This markdown document and associated parsing follows the
- * spec defined by [spec.commonmark.org/0.24/](http://spec.commonmark.org/0.24/)
+ * spec defined by [spec.commonmark.org/0.25/](http://spec.commonmark.org/0.25/)
  */
 open class MarkdownDocument : MarkupDocument {
 

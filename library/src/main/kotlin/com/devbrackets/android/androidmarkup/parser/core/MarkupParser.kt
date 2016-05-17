@@ -20,9 +20,8 @@ abstract class MarkupParser {
     /**
      * Converts the specified markup text in to a Spanned
      * for use in the [com.devbrackets.android.androidmarkup.widget.MarkupEditText]
-
+     *
      * @param text The markup text to convert to a spanned
-     * *
      * @return The resulting spanned
      */
     abstract fun toSpanned(text: String): Spanned
@@ -30,14 +29,13 @@ abstract class MarkupParser {
     /**
      * Converts the specified spanned in to the corresponding markup.  The outputs from
      * this and [.toSpanned] should be interchangeable.
-
+     *
      * @param spanned The Spanned to convert to markup
-     * *
      * @return The markup representing the Spanned
      */
     abstract fun fromSpanned(spanned: Spanned): String
 
-    fun updateSpan(spannable: Spannable, spanType: Int, startIndex: Int, endIndex: Int): Boolean {
+    open fun updateSpan(spannable: Spannable, spanType: Int, startIndex: Int, endIndex: Int): Boolean {
         when (spanType) {
             SpanType.BOLD -> {
                 style(spannable, startIndex, endIndex, Typeface.BOLD)
@@ -151,8 +149,6 @@ abstract class MarkupParser {
      *  1.
      * The selection start is contained within the span and the selection end is equal to the
      * span end.  (e.g. __|______| will result in __|******|)
-     *
-     *
      */
     protected fun handleSpanStartBeforeSelection(spannable: Spannable, span: Any, spanStart: Int, spanEnd: Int, selectionStart: Int, selectionEnd: Int): Boolean {
         if (spanStart > selectionStart) {
@@ -205,8 +201,6 @@ abstract class MarkupParser {
      * The selection start is before the `spanStart` and the `selectionEnd`
      * is before or equal to the span end. (e.g. (|***___| will result in |______| or |***___|___
      * will result in |______|___)
-     *
-     *
      */
     protected fun handleSpanStartAfterSelection(spannable: Spannable, span: Any, spanStart: Int, spanEnd: Int, selectionStart: Int, selectionEnd: Int): Boolean {
         if (spanStart <= selectionStart) {
@@ -291,15 +285,15 @@ abstract class MarkupParser {
     /**
 
      * @param spannable The spannable that the spans to check for overlaps are associated with
-     * *
+     *
      * @param lhs The first span object to determine if it overlaps with `rhs`.
-     * *            If the spans are merged, this will be the span left associated with the
-     * *            `spannable`
-     * *
+     *            If the spans are merged, this will be the span left associated with the
+     *            `spannable`
+     *
      * @param rhs The second span object to determine if it overlaps with `lhs`.
-     * *            If the spans are merged, this will be the span removed from the
-     * *            `spannable`
-     * *
+     *            If the spans are merged, this will be the span removed from the
+     *            `spannable`
+     *
      * @return True if the spans have been merged
      */
     protected fun compareAndMerge(spannable: Spannable, lhs: Any, rhs: Any): Boolean {
@@ -325,9 +319,8 @@ abstract class MarkupParser {
      * Used to duplicate spans when splitting an existing span in to two.
      * This would occur when the selection is only a partial of the styled
      * text and the styling is removed.
-
+     *
      * @param span The span to duplicate
-     * *
      * @return The duplicate span or null
      */
     protected fun duplicateSpan(span: Any): Any? {
