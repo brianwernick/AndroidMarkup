@@ -4,12 +4,10 @@ Android Markup
 An Android Widget and basic parser for supporting WYSIWYG editing of text in
 to markup languages such as HTML or Markdown
 
+Proof of Concept
+------
+This project has been deemed a proof of concept and won't be maintained
 
-Website And Documentation
--------
-The AndroidMarkup website can be found [here][2]
-
-The AndroidMarkup documentation website can be found on the website linked above or [here][3]
 
 
 Use
